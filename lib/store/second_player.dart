@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:maru_batu_game/model/piece.dart';
 import 'package:maru_batu_game/model/player_type.dart';
-import 'package:maru_batu_game/store/player.dart';
+import 'package:maru_batu_game/store/player_data.dart';
 import 'package:maru_batu_game/store/turn.dart';
 
-Player _secondPlayer = Player(PlayerType.Second);
+PlayerData _secondPlayer = PlayerData(PlayerType.Second);
 
 class SecondPlayer {
-  static void reset() => _secondPlayer = Player(PlayerType.Second);
-  static List<Piece> get hasPieces => _secondPlayer.hasPieces;
+  static PlayerData playerData = _secondPlayer;
+
+  static void reset() => playerData = PlayerData(PlayerType.Second);
+
+  static List<Piece> get hasPieces => playerData.hasPieces;
+
+  static void removePiece(Piece piece) => playerData.hasPieces.remove(piece);
 
   static List<Widget> hasPiecesWidget() => hasPieces
-      .map((Piece piece) => Turn.current() == PlayerType.Second
-          ? _pieceWidget(piece)
+      .map((Piece piece) => Turn.current() == playerData.type
+          ? _hasPieceWidget(piece)
           : _dummyPieceWidget(piece))
       .toList();
 
@@ -27,13 +32,13 @@ class SecondPlayer {
         ),
         Opacity(
           opacity: 0.6,
-          child: Center(child: Icon(Icons.lock,size: 50)),
+          child: Center(child: Icon(Icons.lock, size: 50)),
         ),
       ],
     );
   }
 
-  static Widget _pieceWidget(Piece piece) {
+  static Widget _hasPieceWidget(Piece piece) {
     return Draggable(
       data: piece,
       child: Container(
@@ -48,6 +53,4 @@ class SecondPlayer {
       ),
     );
   }
-
-  static void removePiece(Piece piece) => _secondPlayer.hasPieces.remove(piece);
 }

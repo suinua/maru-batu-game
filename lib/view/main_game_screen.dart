@@ -17,7 +17,7 @@ class _MainGameScreenState extends State<MainGameScreen> {
     });
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon: Icon(Icons.refresh), onPressed: () {}),
+        leading: Opacity(opacity: 0),
         centerTitle: true,
         title: RotatedBox(
           quarterTurns: 2,
@@ -29,19 +29,11 @@ class _MainGameScreenState extends State<MainGameScreen> {
         child: Container(
           height: 50,
           width: double.infinity,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Opacity(
-                opacity: 0,
-                child: IconButton(icon: Icon(Icons.refresh), onPressed: null),
-              ),
-              Text(
-                Turn.current() == PlayerType.First ? 'あなたのターン' : '',
-                style: TextStyle(fontSize: 30, color: Colors.white),
-              ),
-              IconButton(icon: Icon(Icons.refresh,color: Colors.white,), onPressed: () {}),
-            ],
+          child: Center(
+            child: Text(
+              Turn.current() == PlayerType.First ? 'あなたのターン' : '',
+              style: TextStyle(fontSize: 30, color: Colors.white),
+            ),
           ),
         ),
       ),

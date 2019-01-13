@@ -20,9 +20,7 @@ class Trout {
             width: 80,
             height: 80,
             child: Card(
-              child: setPiece == null
-                  ? Container()
-                  : setPiece.asWidget(),
+              child: setPiece == null ? Container() : setPiece.asWidget(),
             ),
           );
         },
@@ -32,16 +30,31 @@ class Trout {
         onAccept: (Piece piece) {
           setPiece = piece;
 
-          if (setPiece.ownerType == PlayerType.First) FirstPlayer.removePiece(piece);
-          if (setPiece.ownerType == PlayerType.Second) SecondPlayer.removePiece(piece);
+          if (setPiece.ownerType == PlayerType.First)
+            FirstPlayer.removePiece(piece);
+          if (setPiece.ownerType == PlayerType.Second)
+            SecondPlayer.removePiece(piece);
 
           Turn.change();
           PlayerType winPlayer = TroutTable.winPlayer();
-          if(winPlayer != null){
+
+          bool isStacked = FirstPlayer.hasPieces.length == 0 &&
+              SecondPlayer.hasPieces.length == 0;
+
+          if (winPlayer == null) {
+            if (isStacked) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) {
+                  return GameScreen.result(winPlayer);
+                }),
+              );
+            }
+          } else {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (BuildContext context) {
-                return  GameScreen.result(winPlayer);
+                return GameScreen.result(winPlayer);
               }),
             );
           }

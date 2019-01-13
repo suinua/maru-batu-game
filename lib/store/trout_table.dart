@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maru_batu_game/model/piece.dart';
 import 'package:maru_batu_game/model/player_type.dart';
 import 'package:maru_batu_game/model/post.dart';
 import 'package:maru_batu_game/model/trout.dart';
@@ -17,6 +18,7 @@ class TroutTable {
     Trout(Post(1, 2)),
     Trout(Post(1, 3))
   ];
+
   static void reset() {
     _table = [
       Trout(Post(3, 1)),
@@ -32,6 +34,7 @@ class TroutTable {
       Trout(Post(1, 3))
     ];
   }
+
   static PlayerType winPlayer() {
     List<Trout> firstRow =
         _table.where((Trout trout) => trout.post.column == 1).toList();
@@ -47,19 +50,34 @@ class TroutTable {
     List<Trout> thirdColumn =
         _table.where((Trout trout) => trout.post.row == 3).toList();
 
-    bool isComplete(List<Trout> troutLine) {
-      if (troutLine.where((Trout trout) => trout.setPiece == null).length !=
-          0) {
-        return false;
+    bool isLeftDiagonalLine(Trout trout) {
+      return trout.post.row == trout.post.column;
+    }
+
+    bool isRightDiagonalLine(Trout trout) {
+      if (trout.post.row == 2 && trout.post.column == 2) {
+        return true;
+      } else if (trout.post.row == 1 && trout.post.column == 3) {
+        return true;
+      } else if (trout.post.row == 3 && trout.post.column == 1) {
+        return true;
       }
-      List<PlayerType> owners = <PlayerType>[];
-      troutLine.forEach((Trout trout) {
-        if (trout.setPiece == null) {
-          owners.add(null);
-        } else {
-          owners.add(trout.setPiece.ownerType);
-        }
-      });
+      return false;
+    }
+
+    List<Trout> leftDiagonalLine =
+        _table.where((Trout trout) => isLeftDiagonalLine(trout)).toList();
+    List<Trout> rightDiagonalLine =
+        _table.where((Trout trout) => isRightDiagonalLine(trout)).toList();
+
+    bool isComplete(List<Trout> troutLine) {
+      List<Piece> setPieces =
+          troutLine.map((Trout trout) => trout.setPiece).toList();
+
+      if (setPieces.contains(null)) return false;
+
+      List<PlayerType> owners =
+          setPieces.map((Piece piece) => piece.ownerType).toList();
 
       if (owners.contains(PlayerType.First) &&
           owners.contains(PlayerType.Second)) {
@@ -75,9 +93,12 @@ class TroutTable {
     if (isComplete(firstColumn)) return firstColumn[0].setPiece.ownerType;
     if (isComplete(secondColumn)) return secondColumn[0].setPiece.ownerType;
     if (isComplete(thirdColumn)) return thirdColumn[0].setPiece.ownerType;
+
+    if (isComplete(leftDiagonalLine)) return firstRow[0].setPiece.ownerType;
+    if (isComplete(rightDiagonalLine)) return firstRow[2].setPiece.ownerType;
+
     return null;
   }
-
 
   static Widget asWidget(BuildContext context) {
     Widget rowWidget(int column) {

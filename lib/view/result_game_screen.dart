@@ -18,22 +18,32 @@ class _ResultGameScreenState extends State<ResultGameScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            RotatedBox(
-              quarterTurns: widget.winPlayer == PlayerType.First ? 0 : 2,
-              child: Column(
-                children: <Widget>[
-                  RaisedButton(
-                    onPressed: () => GameAction.reset(context),
-                    child: Text('OK'),
-                  ),
-                  Text('あなたの勝ち！！！',style: TextStyle(fontSize: 40)),
-                ],
-              ),
-            ),
-
+            messageWidget(toFirstPlayer: message(PlayerType.First),toSecondPlayer: message(PlayerType.Second)),
           ],
         ),
       ),
+    );
+  }
+
+  String message(PlayerType playerType){
+    if (widget.winPlayer == null) return '引き分け';
+    if (widget.winPlayer == playerType) return 'あなたの勝ち';
+    return 'あなたの負け';
+  }
+
+  Widget messageWidget({String toFirstPlayer, String toSecondPlayer}) {
+    return Column(
+      children: <Widget>[
+        RotatedBox(
+          quarterTurns: 2,
+          child: Text(toSecondPlayer, style: TextStyle(fontSize: 40)),
+        ),
+        RaisedButton(
+          onPressed: () => GameAction.reset(context),
+          child: Text('もう一回'),
+        ),
+        Text(toFirstPlayer, style: TextStyle(fontSize: 40)),
+      ],
     );
   }
 }
